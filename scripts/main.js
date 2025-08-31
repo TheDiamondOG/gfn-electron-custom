@@ -122,6 +122,26 @@ app.whenReady().then(async () => {
   electronLocalshortcut.register('Control+Shift+I', () => {
     BrowserWindow.getAllWindows()[0].webContents.toggleDevTools();
   });
+
+  session.defaultSession.webRequest.onBeforeRequest((details, callback) => {
+    const blockedHosts = [
+      "telemetry.gfe.nvidia.com",
+      "prod.otel.kaizen.nvidia.com",
+      "gx-target-survey-frontend-api.gx.nvidia.com",
+      "events.gfe.nvidia.com",
+      "gx-target-experiments-frontend-api.gx.nvidia.com",
+      //"games.geforce.com",
+      "public.games.geforce.com",
+      //"prod.cloudmatchbeta.nvidiagrid.net",
+      "simulmedia-apis.com"
+    ];
+
+    if (blockedHosts.some(host => details.url.includes(host))) {
+      return callback({ cancel: true });
+    }
+
+    callback({});
+  });
 });
 
 app.on('browser-window-created', async function (e, window) {

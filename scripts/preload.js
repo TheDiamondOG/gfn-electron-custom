@@ -10,6 +10,28 @@ window.addEventListener("DOMContentLoaded", () => {
   for (const type of ["chrome", "node", "electron"]) {
     replaceText(`${type}-version`, process.versions[type]);
   }
+
+  const removeAd = () => {
+    setTimeout(() => {
+      const adDivConFunny = document.getElementById("preStreamContainer");
+      if (adDivConFunny) {
+        adDivConFunny.remove();
+        console.log("Ad got blocked lol");
+        return true;
+      }
+      return false;
+    }, 250);
+  };
+
+  if (!removeAd()) {
+    const funny = new MutationObserver(() => {
+      if (removeAd()) {
+        funny.disconnect()
+      }
+    });
+
+    funny.observe(document.body, { childList: true, subtree: true });
+  }
 });
 
 (function mockChromeUserAgent() {
